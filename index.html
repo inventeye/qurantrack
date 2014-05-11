@@ -7,6 +7,7 @@
   <script type='text/javascript' src="http://fb.me/JSXTransformer-0.10.0.js"></script>
   <script type='text/javascript' src="http://fb.me/react-with-addons-0.10.0.js"></script>
   <script type='text/javascript' src="http://rawgit.com/inventeye/quranverse/gh-pages/js/hifzdata.js"></script>
+  <script type='text/javascript' src="http://rawgit.com/inventeye/quranverse/gh-pages/js/quran.js"></script>
   <style type='text/css'>
     .Surah{border: 1px solid teal; clear: both; margin-bottom: 7px; }
 	.Ayah{
@@ -24,6 +25,7 @@
 	}
 	.clear{ clear: both; }
 	.move_right{ margin-left: 30px; }
+	.arabic{ font-size: 1.4em; }
 	//.Ayah{ border: 1px solid green; } //#DDDBCC
 
 	.Ayah, div.ayah_counter a {
@@ -50,6 +52,7 @@ var Quran = React.createClass({
     render: function(){
         var o = {};
         o.HIFZ = this.props.data; //this is the array which has all data
+		o.QURANDATA = this.props.qurandata ? this.props.qurandata : { Sura: [] };
         o.quran_length = _.chain(o.HIFZ)
                                  .map(function(item){ return item.data_surah_total; })
                                  .reduce(function(memo, num){ return parseInt(memo) + parseInt(num); }, 0)
@@ -58,7 +61,7 @@ var Quran = React.createClass({
         
         return <div>                    
                     {_.range(0, this.props.data.length).map(function(s){
-                       return <Surah data={this.props.data[ s ] } o={ o }/>
+                       return <Surah data={this.props.data[ s ] } o={ o } qurandata={ o.QURANDATA.Sura[1 + s] } />
                     }, this)}
                </div>
     }
@@ -72,7 +75,10 @@ var Surah = React.createClass({
         }
         return <div className="Surah ayah_counter">
                     <br/>
-                    <span title={' total: '+ this.props.data.data_surah_total}>{'Surah# ' + this.props.data.surah_number }</span>
+                    <span title={' Total length: '+ this.props.data.data_surah_total}>{this.props.data.surah_number + '. ' }</span>
+					<span><b>{this.props.qurandata[5]}</b></span>
+					<span className='arabic move_right'>{this.props.qurandata[4]}</span>
+					<span className='move_right'><i>{this.props.qurandata[6]}</i></span>
 					<span className='move_right'><b>{'( '+percent(this.props.data.data_surah_total) + ' Juz. )' }</b></span> 
                     <br/>
                     {_.range(1, 1+ this.props.data.data_ayah_lengths.length).map(function(a){
@@ -90,7 +96,7 @@ var Ayah = React.createClass({
 });
 
 //React.renderComponent(<Surah data={HIFZ[113]} />, document.body);
-React.renderComponent(<Quran data={HIFZ} />, document.body);
+React.renderComponent(<Quran data={HIFZ} qurandata={QuranData} />, document.body);
  
 //]]> 
 </script>
