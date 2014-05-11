@@ -95,6 +95,17 @@ React.renderComponent(<Quran data={HIFZ} />, document.body);
 
 </head>
 <body>
-  <script src="http://fb.me/react-js-fiddle-integration.js"></script>
+  <script type="text/javascript">
+  (function() {
+	  var tag = document.querySelector(
+		'script[type="application/javascript;version=1.7"]'
+	  );
+	  if (!tag || tag.textContent.indexOf('window.onload=function(){') !== -1) {
+		alert('Bad configuration, please inform admin.');
+	  }
+	  tag.setAttribute('type', 'text/jsx');
+	  tag.textContent = tag.textContent.replace(/^\/\/<!\[CDATA\[/, '');
+	})();
+  </script>
 </body>
 </html>
