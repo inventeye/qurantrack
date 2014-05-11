@@ -23,6 +23,7 @@
 		border-radius: 3px;
 	}
 	.clear{ clear: both; }
+	.move_right{ margin-left: 30px; }
 	//.Ayah{ border: 1px solid green; } //#DDDBCC
 
 	.Ayah, div.ayah_counter a {
@@ -71,7 +72,8 @@ var Surah = React.createClass({
         }
         return <div className="Surah ayah_counter">
                     <br/>
-                    {'Surah# ' + this.props.data.surah_number +' total: '+ this.props.data.data_surah_total + '  ' + percent(this.props.data.data_surah_total) + ' Juz.' } 
+                    <span title={' total: '+ this.props.data.data_surah_total}>{'Surah# ' + this.props.data.surah_number }</span>
+					<span className='move_right'><b>{'( '+percent(this.props.data.data_surah_total) + ' Juz. )' }</b></span> 
                     <br/>
                     {_.range(1, 1+ this.props.data.data_ayah_lengths.length).map(function(a){
                         return <Ayah ayahno={a} alength={this.props.data.data_ayah_lengths[-1 + a]}></Ayah>
