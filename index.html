@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>Quran Track (Track your hifz/memorization)</title>
+  <script type='text/javascript' src='http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js'></script> 
+  <script type='text/javascript' src="http://fb.me/JSXTransformer-0.10.0.js"></script>
+  <script type='text/javascript' src="http://fb.me/react-with-addons-0.10.0.js"></script>
+  <script type='text/javascript' src="http://rawgit.com/inventeye/quranverse/gh-pages/js/hifzdata.js"></script>
+  <style type='text/css'>
+    .Surah{border: 1px solid teal; clear: both; margin-bottom: 7px; }
+	.Ayah{
+		padding: 2px 2px 0px;
+		text-align: center;
+		border: 1px solid #808080;
+		width: 25px;
+		height: 18px;
+		display: block;
+		float: left;
+		margin: 1px;
+		font-size: 12px;
+		text-decoration: none;
+		border-radius: 3px;
+	}
+	.clear{ clear: both; }
+	//.Ayah{ border: 1px solid green; } //#DDDBCC
+
+	.Ayah, div.ayah_counter a {
+		padding: 2px 2px 0px;
+		text-align: center;
+		border: 1px solid #808080;
+		width: 25px;
+		height: 18px;
+		display: block;
+		float: left;
+		margin: 1px;
+		font-size: 12px;
+		text-decoration: none;
+		border-radius: 3px;
+	}
+  </style>
+  
+  <script type="application/javascript;version=1.7" language="JavaScript 1.7">//<![CDATA[
+/** @jsx React.DOM */
+// https://rawgit.com/inventeye/quranverse/gh-pages/js/hifzdata.js
+// https://raw.githubusercontent.com/inventeye/quranverse/gh-pages/js/hifzdata.js
+
+var Quran = React.createClass({
+    render: function(){
+        var o = {};
+        o.HIFZ = this.props.data; //this is the array which has all data
+        o.quran_length = _.chain(o.HIFZ)
+                                 .map(function(item){ return item.data_surah_total; })
+                                 .reduce(function(memo, num){ return parseInt(memo) + parseInt(num); }, 0)
+                                 .value();
+        o.juz_length   = o.quran_length / 30;
+        
+        return <div>                    
+                    {_.range(0, this.props.data.length).map(function(s){
+                       return <Surah data={this.props.data[ s ] } o={ o }/>
+                    }, this)}
+               </div>
+    }
+});
+
+var Surah = React.createClass({
+    render: function(){
+        var o = this.props.o;
+        var percent = function(number){
+            return Math.round(  100* (parseInt(number) / o.juz_length) )/100;
+        }
+        return <div className="Surah ayah_counter">
+                    <br/>
+                    {'Surah# ' + this.props.data.surah_number +' total: '+ this.props.data.data_surah_total + '  ' + percent(this.props.data.data_surah_total) + ' Juz.' } 
+                    <br/>
+                    {_.range(1, 1+ this.props.data.data_ayah_lengths.length).map(function(a){
+                        return <Ayah ayahno={a} alength={this.props.data.data_ayah_lengths[-1 + a]}></Ayah>
+                    }, this)}
+                    <div className="clear">&nbsp;</div><br/>
+               </div> 
+    }
+});
+ 
+var Ayah = React.createClass({
+    render: function(){
+        return <a className="Ayah" title={"Length: "+ this.props.alength}>{this.props.ayahno}</a>
+    }
+});
+
+//React.renderComponent(<Surah data={HIFZ[113]} />, document.body);
+React.renderComponent(<Quran data={HIFZ} />, document.body);
+ 
+//]]> 
+</script>
+
+</head>
+<body>
+  <script src="http://fb.me/react-js-fiddle-integration.js"></script>
+</body>
+</html>
