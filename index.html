@@ -134,13 +134,21 @@ var Quran = React.createClass({
         
         return <div>                    
                     {_.range(0, this.props.data.length).map(function(s){
-                       return <Surah data={this.props.data[ s ] } o={ o } qurandata={ o.QURANDATA.Sura[1 + s] } />
+                       return <Surah surah={ 1 + s } data={this.props.data[ s ] } o={ o } qurandata={ o.QURANDATA.Sura[1 + s] } />
                     }, this)}
                </div>
     }
 });
 
 var Surah = React.createClass({
+	//getInitialState: function(){
+	//	var data_ayah_status = this.props.data.data_ayah_lengths ? new Array[ /*this.props.data.data_ayah_lengths.length*/ 256 ] : [];
+	//	return{data: {data_ayah_status: data_ayah_status} };
+	//},
+	onStatusChange: function(surah, ayah, status, className){
+		console.log([surah, ayah, status, className]);
+	},
+	
     render: function(){
         var o = this.props.o;
         var percent = function(number){
@@ -155,7 +163,11 @@ var Surah = React.createClass({
 					<span className='move_right'><b>{'( '+percent(this.props.data.data_surah_total) + ' Juz. )' }</b></span> 
                     <br/>
                     {_.range(1, 1+ this.props.data.data_ayah_lengths.length).map(function(a){
-                        return <Ayah ayahno={a} alength={this.props.data.data_ayah_lengths[-1 + a]}></Ayah>
+						//if(this.state.data.data_ayah_status);
+                        return <Ayah surah={this.props.surah} ayahno={a} alength={this.props.data.data_ayah_lengths[-1 + a]}
+						//astatus={this.state.data.data_ayah_status[-1 + a]}
+						onStatusChange={this.onStatusChange}
+						></Ayah>
                     }, this)}
                     <div className="clear">&nbsp;</div><br/>
                </div> 
@@ -168,12 +180,13 @@ var Ayah = React.createClass({
     },
     changeStatus: function(){
 		var status, className;
-		status = ++this.state.status % 4;
+		status = ++this.state.status; if(status == 4){ status = this.state.status = 0;}
 		className = 'status_h_' + (status == 0 ? '00' : (status*25) ); //console.log( JSON.stringify( {status: status, class: className} ) );
 		this.setState({ status: status, class: className });
+		this.props.onStatusChange(this.props.surah, this.props.ayahno, this.state.status, className);
 	},
     render: function(){
-        return <a className={"Ayah " + this.state.class} title={"Length: "+ this.props.alength} onClick={this.changeStatus}> {this.props.ayahno} </a>
+        return <a id={"ayah-" + this.props.surah +"-"+ this.props.ayahno } href="#" data-ayah-number={this.props.ayahno} data-ayah-length={this.props.alength} data-status={this.state.status} className={"Ayah " + this.state.class} title={"Length: "+ this.props.alength} onClick={this.changeStatus}> {this.props.ayahno} </a>
     }
 });
 
